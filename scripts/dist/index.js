@@ -122,6 +122,7 @@ world.beforeEvents.playerInteractWithEntity.subscribe(async ({ player, target, i
         if (info?.entity)
             hitSet.add(info.entity.id);
     }
+    isPlayerPlaying.set(player.id, true); // use item will set too, not sure should this exist
     await system.waitTicks(1);
     // === 播放邏輯（改為播放多個） ===
     if (hitSet.size > 0) {
@@ -138,7 +139,6 @@ world.beforeEvents.playerInteractWithEntity.subscribe(async ({ player, target, i
             }
         }
     }
-    isPlayerPlaying.set(player.id, true);
 });
 // 玩家攻擊實體（調整音高或刪除）
 world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => {

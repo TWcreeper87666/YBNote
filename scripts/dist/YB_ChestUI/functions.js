@@ -1,5 +1,5 @@
 export function givePlayerItem(player, item) {
-    const container = player.getComponent('inventory').container;
+    const container = player.getComponent("inventory").container;
     if (container.addItem(item)) {
         player.dimension.spawnItem(item, player.location);
     }
@@ -15,7 +15,10 @@ export function getBorderButtonAndIdxs(width, button, fromIdx, toIdx, obj = {}) 
     for (let row = startRow; row <= endRow; row++) {
         for (let col = startCol; col <= endCol; col++) {
             const currentIdx = row * width + col;
-            if (row === startRow || row === endRow || col === startCol || col === endCol) {
+            if (row === startRow ||
+                row === endRow ||
+                col === startCol ||
+                col === endCol) {
                 obj[currentIdx] = button;
             }
         }

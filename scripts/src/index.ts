@@ -63,7 +63,7 @@ export function moveEntityToView(player: Player, entity: Entity) {
 export async function playRecordedData(
   player: Player,
   data: { tick: number; entityId: string }[],
-  location?: Vector3
+  location?: Vector3,
 ) {
   if (data.length === 0) return;
   currentData = data;
@@ -83,7 +83,7 @@ export async function playRecordedData(
     player.spawnParticle(
       "yb:test4",
       vectorOffset(entity.getAABB().center, 0, 0.05),
-      test4_mvm
+      test4_mvm,
     );
 
     await system.waitTicks(data[i + 1]?.tick - data[i].tick || 1);
@@ -144,7 +144,7 @@ world.beforeEvents.itemUse.subscribe(
         }
       }
     }
-  }
+  },
 );
 
 world.beforeEvents.playerInteractWithEntity.subscribe(
@@ -162,6 +162,7 @@ world.beforeEvents.playerInteractWithEntity.subscribe(
       if (info?.entity) hitSet.add(info.entity.id);
     }
 
+    isPlayerPlaying.set(player.id, true); // use item will set too, not sure should this exist
     await system.waitTicks(1);
 
     // === 播放邏輯（改為播放多個） ===
@@ -180,9 +181,7 @@ world.beforeEvents.playerInteractWithEntity.subscribe(
         }
       }
     }
-
-    isPlayerPlaying.set(player.id, true);
-  }
+  },
 );
 
 // 玩家攻擊實體（調整音高或刪除）
@@ -207,7 +206,7 @@ world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => {
       damagingEntity.spawnParticle(
         "minecraft:note_particle",
         hitEntity.getHeadLocation(),
-        note_mvm
+        note_mvm,
       );
     } catch {}
   } else if (itemStack?.typeId === "yb:note_edit") {
@@ -310,7 +309,7 @@ system.runInterval(() => {
           player.spawnParticle(
             "yb:test2",
             entity.getHeadLocation(),
-            circle_move_mvm
+            circle_move_mvm,
           );
         }
       }

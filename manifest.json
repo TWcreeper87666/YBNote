@@ -4,13 +4,25 @@
 		"description": "byTWc",
 		"name": "YBNote",
 		"uuid": "0574a206-33b1-475f-9fc5-fee04002fac2",
-		"version": [8, 7, 6],
-		"min_engine_version": [1, 19, 60]
+		"version": [
+			8,
+			7,
+			6
+		],
+		"min_engine_version": [
+			1,
+			19,
+			60
+		]
 	},
 	"modules": [
 		{
 			"uuid": "e7274039-d856-40bf-8bbc-50f86d1c4673",
-			"version": [1, 0, 0],
+			"version": [
+				1,
+				0,
+				0
+			],
 			"type": "script",
 			"language": "javascript",
 			"entry": "scripts/dist/index.js"
@@ -24,6 +36,14 @@
 		{
 			"module_name": "@minecraft/server-ui",
 			"version": "2.0.0"
+		},
+		{
+			"uuid": "cad70b3b-810a-423a-89cf-38a1b9bab001",
+			"version": [
+				8,
+				7,
+				8
+			]
 		}
 	]
 }

@@ -1,4 +1,4 @@
-import { MolangVariableMap, } from "@minecraft/server";
+import { MolangVariableMap } from "@minecraft/server";
 import { sounds, PITCH, PITCH_COLOR, noteNames, REACH_DISTANCE, } from "../constants";
 import { vectorOffset } from "../functions";
 import { Button, ChestUI, Page, Size, UpdateType } from "./classes/ChestUI";
@@ -27,6 +27,7 @@ const SOUND_SLOTS_START = 37;
 const SOUND_SLOTS_COUNT = 4;
 const SOUND_SLOT_LEFT_ARROW = 36;
 const SOUND_SLOT_RIGHT_ARROW = 41;
+const SOUND_PREVIEW_SLOT = 43;
 function getNoteName(pitchIdx) {
     return noteNames[pitchIdx % 12];
 }
@@ -128,6 +129,9 @@ function pageInit() {
             updateSound(player, data, false);
         },
     });
+    obj[SOUND_PREVIEW_SLOT] = new Button("目前音色", "barrier", {
+        updateType: UpdateType.empty,
+    });
     obj[SAVE_BTN_IDX] = new Button("新增音符", "lime_concrete", {
         onClick: ({ player }) => {
             const { pitchIdx, soundIdx } = ChestUI.getData(player);
@@ -182,6 +186,10 @@ function updateSound(player, data, playSound = true) {
     else {
         itemsToUpdate[SOUND_SLOT_RIGHT_ARROW] = ChestUI.newUIItem("►", "arrow");
     }
+    // Update preview slot
+    const soundName = sounds[data.soundIdx];
+    const blockType = noteBlockSoundMap[soundName] ?? "grass_block";
+    itemsToUpdate[SOUND_PREVIEW_SLOT] = ChestUI.newUIItem(`§e${soundName}`, blockType, { lore: ["§r§7目前選擇的音色"] });
     ChestUI.setPageItem(player, itemsToUpdate);
 }
 function updateFunc({ player, idx, soundIdx, }) {

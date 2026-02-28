@@ -1,28 +1,19 @@
-import {
-  Entity,
-  MolangVariableMap,
-  Player,
-  system,
-  Vector3,
-  world,
-} from "@minecraft/server";
-import { sendMessage, vectorAdd, vectorMinus, vectorOffset } from "./functions";
+import { Entity, Player, system, world } from "@minecraft/server";
+import { vectorAdd } from "./functions";
 import { form_modifyNote, form_addNote, form_recordSetting } from "./forms";
 import {
-  circle_move_mvm,
-  highlight_mvm,
   note_mvm,
   PDP_tmpPitchIdx,
   PDP_tmpSoundIdx,
   PITCH,
   PITCH_COLOR,
   REACH_DISTANCE,
-  RENDERING_DISTANCE,
-  test4_mvm,
-  test_mvm,
+  bg_glow_mvm,
+  circle_move_mvm,
 } from "./constants";
 import "./YB_ChestUI/main";
 import { YBNote, entityPlayedMap } from "./YBNote";
+import { RecordManager } from "./RecordManager";
 
 // === 狀態紀錄 ===
 // 玩家是否正在使用播放物品（長按右鍵）
@@ -31,11 +22,6 @@ export const isPlayerPlaying = new Map<string, boolean>();
 export const activeNotesByPlayer = new Map<string, Set<string>>();
 // 玩家當前拿取中的實體
 const heldEntityByPlayer = new Map<string, string>();
-
-let recording = false;
-let recordPlaying = false;
-let startRecordTick = 0;
-export let currentData: { tick: number; entityId: string }[] = [];
 
 /** 停止播放音符並清除狀態 */
 export function stopNoteEntity(player: Player, entityId: string) {
@@ -57,41 +43,7 @@ export function moveEntityToView(player: Player, entity: Entity) {
   const location = vectorAdd(head, view);
   entity.teleport(location);
 
-  player.spawnParticle("yb:holding", location);
-}
-
-export async function playRecordedData(
-  player: Player,
-  data: { tick: number; entityId: string }[],
-  location?: Vector3,
-) {
-  if (data.length === 0) return;
-  currentData = data;
-  if (recordPlaying)
-    return sendMessage(player, "§c目前正在播放錄製中，無法重複播放!");
-  if (location) player.teleport(location);
-  await system.waitTicks(20);
-  recordPlaying = true;
-  let i = 0;
-  while (i < data.length) {
-    const entity = world.getEntity(data[i].entityId);
-
-    test4_mvm.setColorRGBA("color", {
-      ...PITCH_COLOR[YBNote.info(entity).pitchIdx],
-      alpha: 1,
-    });
-    player.spawnParticle(
-      "yb:test4",
-      vectorOffset(entity.getAABB().center, 0, 0.05),
-      test4_mvm,
-    );
-
-    await system.waitTicks(data[i + 1]?.tick - data[i].tick || 1);
-    i++;
-  }
-  await system.waitTicks(60);
-  recordPlaying = false;
-  sendMessage(player, "§b播放結束!");
+  player.spawnParticle("yb:note_holding", location);
 }
 
 // === 事件 ===
@@ -129,20 +81,7 @@ world.beforeEvents.itemUse.subscribe(
     if (typeId === "yb:note_record") {
       await system.waitTicks(1);
 
-      const response = await form_recordSetting(source, recording);
-      if (!response) return;
-      if (response.play) {
-        sendMessage(source, `§b已開始播放`);
-        recording = false;
-        playRecordedData(source, currentData);
-      } else if (response.record) {
-        recording = !recording;
-        sendMessage(source, `§b已${recording ? "開始" : "停止"}錄製!`);
-        if (recording) {
-          startRecordTick = system.currentTick;
-          currentData = [];
-        }
-      }
+      form_recordSetting(source);
     }
   },
 );
@@ -252,7 +191,7 @@ system.runInterval(() => {
     if (itemTypeId === "yb:eui_open") {
       for (const id of hitSet) {
         const e = world.getEntity(id);
-        if (e) player.spawnParticle("yb:target", e.getHeadLocation());
+        if (e) player.spawnParticle("yb:note_target", e.getHeadLocation());
       }
     }
 
@@ -283,31 +222,28 @@ system.runInterval(() => {
           // // circle_move_mvm.setFloat("offset", 100);
           // // circle_move_mvm.setFloat("max_age", 1.5);
           // player.spawnParticle(
-          //   "yb:test2",
+          //   "note_lane_up",
           //   entity.getHeadLocation(),
           //   circle_move_mvm
           // );
 
-          test_mvm.setColorRGBA("color", {
+          bg_glow_mvm.setColorRGBA("color", {
             ...PITCH_COLOR[YBNote.info(entity).pitchIdx],
             alpha: 0.005,
           });
-          player.spawnParticle("yb:circle", entity.getHeadLocation(), test_mvm);
+          player.spawnParticle("yb:circle", entity.getHeadLocation(), bg_glow_mvm);
 
-          if (recording) {
-            currentData.push({
-              tick: system.currentTick - startRecordTick,
-              entityId: id,
-            });
+          if (RecordManager.isRecording) {
+            RecordManager.recordNote(id);
           }
         }
-        if (!recordPlaying) {
+        if (!RecordManager.isPlaying) {
           circle_move_mvm.setColorRGBA("color", {
             ...PITCH_COLOR[YBNote.info(entity).pitchIdx],
             alpha: 1,
           });
           player.spawnParticle(
-            "yb:test2",
+            "yb:note_lane_up",
             entity.getHeadLocation(),
             circle_move_mvm,
           );

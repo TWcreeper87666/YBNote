@@ -3,7 +3,7 @@ import { PlayerDP } from "./DynamicProperty";
 
 // pitch=0 是 C4，pitch=9 是 A4 (440Hz)，pitch=24 是 C5
 export const PITCH: number[] = Array.from({ length: 36 }, (_, i) =>
-  Math.pow(2, (i - 9) / 12)
+  Math.pow(2, (i - 9) / 12),
 );
 
 export const PITCH_COLOR = [
@@ -84,24 +84,16 @@ export const noteNames = [
 export const PDP_tmpPitchIdx = new PlayerDP<number>("note_tmpPitchIdx", 0);
 export const PDP_tmpSoundIdx = new PlayerDP<number>(
   "note_tmpSoundIdx",
-  sounds.length - 1
+  sounds.length - 1,
 );
 
 // === 粒子效果 Molang ===
-export let circle_mvm: MolangVariableMap;
 export let circle_move_mvm: MolangVariableMap;
-export let test4_mvm: MolangVariableMap;
-export let test_mvm: MolangVariableMap;
+export let osu_mvm: MolangVariableMap;
+export let bg_glow_mvm: MolangVariableMap;
 export let note_mvm: MolangVariableMap;
-export let highlight_mvm: MolangVariableMap;
-export let particle_mvm: MolangVariableMap;
-system.run(() => {
-  circle_mvm = new MolangVariableMap();
-  circle_mvm.setColorRGBA("color", { red: 1, green: 0, blue: 0, alpha: 0.5 });
-  circle_mvm.setSpeedAndDirection("sad", 0, { x: 0, y: 0, z: 0 });
-  circle_mvm.setFloat("size", 0.3);
-  circle_mvm.setFloat("max_lifetime", 0.05);
 
+system.run(() => {
   circle_move_mvm = new MolangVariableMap();
   circle_move_mvm.setColorRGBA("color", {
     red: 1,
@@ -113,26 +105,15 @@ system.run(() => {
   circle_move_mvm.setFloat("size", 1); // 0.2
   circle_move_mvm.setFloat("max_lifetime", 1);
 
-  test4_mvm = new MolangVariableMap();
-  test4_mvm.setFloat("size", 1);
+  osu_mvm = new MolangVariableMap();
+  osu_mvm.setFloat("size", 1);
 
-  test_mvm = new MolangVariableMap();
-  test_mvm.setColorRGBA("color", { red: 1, green: 1, blue: 1, alpha: 0.005 });
-  test_mvm.setSpeedAndDirection("sad", 0, { x: 0, y: 0, z: 0 });
-  test_mvm.setFloat("size", 100);
-  test_mvm.setFloat("max_lifetime", 0.05);
+  bg_glow_mvm = new MolangVariableMap();
+  bg_glow_mvm.setColorRGBA("color", { red: 1, green: 1, blue: 1, alpha: 0.005 });
+  bg_glow_mvm.setSpeedAndDirection("sad", 0, { x: 0, y: 0, z: 0 });
+  bg_glow_mvm.setFloat("size", 100);
+  bg_glow_mvm.setFloat("max_lifetime", 0.05);
 
   note_mvm = new MolangVariableMap();
   note_mvm.setColorRGB("note_color", { red: 1, green: 0, blue: 0 });
-
-  highlight_mvm = new MolangVariableMap();
-  highlight_mvm.setColorRGBA("color", { red: 1, green: 1, blue: 1, alpha: 1 });
-  highlight_mvm.setSpeedAndDirection("sad", 0, { x: 0, y: 0, z: 0 });
-  highlight_mvm.setFloat("size", 0.3);
-  highlight_mvm.setFloat("max_lifetime", 0.05);
-
-  particle_mvm = new MolangVariableMap();
-  particle_mvm.setColorRGBA("color", { red: 1, green: 1, blue: 1, alpha: 1 });
-  particle_mvm.setFloat("size", 0.1);
-  particle_mvm.setFloat("max_lifetime", 1);
 });

@@ -48,7 +48,7 @@ export class YBNote {
         try {
             const mvm = new MolangVariableMap();
             mvm.setColorRGBA('color', { ...PITCH_COLOR[pitchIdx], alpha: 1 });
-            entity.dimension.spawnParticle('yb:magic2', entity.getHeadLocation(), mvm);
+            entity.dimension.spawnParticle('yb:note_play', entity.getHeadLocation(), mvm);
         }
         catch { }
         if (!once) {

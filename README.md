@@ -7,8 +7,8 @@
 Inspired by: BOCLAA
 
 ### TODO
-- [ ] ChestUI 新增上一個sound按鈕
-- [ ] record store player location 
+- [x] ChestUI 新增上一個sound按鈕
+- [x] record store player location 
 
 ### BUG
-- [ ] chestUI編輯entity 不切換手中物品不會更新pitch, sound
+- [x] chestUI編輯entity 不切換手中物品不會更新pitch, sound

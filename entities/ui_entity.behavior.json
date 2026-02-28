@@ -1,0 +1,120 @@
+{
+    "format_version": "1.17.10",
+    "minecraft:entity": {
+        "description": {
+            "identifier": "yb:ui_entity",
+            "is_spawnable": false,
+            "is_summonable": true,
+            "is_experimental": false
+        },
+        "component_groups": {
+            "yb:tamed": {
+                "minecraft:is_tamed": {},
+                "minecraft:interact": {
+                    "interactions": [
+                        {
+                            "on_interact": {
+                                "filters": {
+                                    "all_of": [
+                                        {
+                                            "test": "is_family",
+                                            "subject": "other",
+                                            "value": "player"
+                                        },
+                                        {
+                                            "test": "has_equipment",
+                                            "domain": "hand",
+                                            "subject": "other",
+                                            "value": "yb:eui_open",
+                                            "operator": "not"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "yb:kill": {
+                "minecraft:instant_despawn": {}
+            },
+            "yb:show": {
+                "minecraft:collision_box": {
+                    "width": 2,
+                    "height": 2
+                }
+            },
+            "yb:hide": {
+                "minecraft:collision_box": {
+                    "width": 0.01,
+                    "height": 0.01
+                }
+            }
+        },
+        "components": {
+            "minecraft:damage_sensor": {
+                "triggers": {
+                    "deals_damage": false
+                }
+            },
+            "minecraft:collision_box": {
+                "width": 1,
+                "height": 1
+            },
+            "minecraft:physics": {
+                "has_collision": true,
+                "has_gravity": false
+            },
+            "minecraft:pushable": {
+                "is_pushable": false,
+                "is_pushable_by_piston": false
+            },
+            "minecraft:nameable": {
+                "allow_name_tag_renaming": false,
+                "always_show": false
+            },
+            "minecraft:tameable": {
+                "tame_items": "bedrock",
+                "tame_event": {
+                    "event": "yb:on_tame",
+                    "target": "self"
+                }
+            },
+            "minecraft:inventory": {
+                "container_type": "inventory",
+                "inventory_size": 117,
+                "restrict_to_owner": true
+            }
+        },
+        "events": {
+            "yb:on_tame": {
+                "add": {
+                    "component_groups": [
+                        "yb:tamed"
+                    ]
+                }
+            },
+            "yb:kill": {
+                "add": {
+                    "component_groups": [
+                        "yb:kill"
+                    ]
+                }
+            },
+            "yb:show": {
+                "add": {
+                    "component_groups": [
+                        "yb:show"
+                    ]
+                }
+            },
+            "yb:hide": {
+                "add": {
+                    "component_groups": [
+                        "yb:hide"
+                    ]
+                }
+            }
+        }
+    }
+}

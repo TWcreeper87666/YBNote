@@ -1,0 +1,94 @@
+{
+	"format_version": "1.13.0",
+	"minecraft:entity": {
+		"description": {
+			"identifier": "yb:note_entity",
+			"is_spawnable": false,
+			"is_summonable": true,
+			"is_experimental": false,
+			"properties": {
+				"yb:color_r": {
+					"type": "float",
+					"range": [
+						0.0,
+						1.0
+					],
+					"default": 1.0,
+					"client_sync": true
+				},
+				"yb:color_g": {
+					"type": "float",
+					"range": [
+						0.0,
+						1.0
+					],
+					"default": 1.0,
+					"client_sync": true
+				},
+				"yb:color_b": {
+					"type": "float",
+					"range": [
+						0.0,
+						1.0
+					],
+					"default": 1.0,
+					"client_sync": true
+				},
+				"yb:color_a": {
+					"type": "float",
+					"range": [
+						0.0,
+						1.0
+					],
+					"default": 1.0,
+					"client_sync": true
+				}
+			}
+		},
+		"component_groups": {
+			"yb:kill": {
+				"minecraft:instant_despawn": {}
+			}
+		},
+		"components": {
+			"minecraft:scale": {
+				"value": 0.8
+			},
+			"minecraft:collision_box": {
+				"width": 0.15,
+				"height": 0.2
+			},
+			"minecraft:physics": {
+				"has_collision": false,
+				"has_gravity": false,
+				"push_towards_closest_space": false
+			},
+			"minecraft:pushable": {
+				"is_pushable": false,
+				"is_pushable_by_piston": false
+			},
+			"minecraft:conditional_bandwidth_optimization": {},
+			"minecraft:damage_sensor": {
+				"triggers": [
+					{
+						"cause": "all",
+						"deals_damage": false
+					}
+				]
+			},
+			"minecraft:nameable": {
+				"allow_name_tag_renaming": false,
+				"always_show": true
+			}
+		},
+		"events": {
+			"yb:kill": {
+				"add": {
+					"component_groups": [
+						"yb:kill"
+					]
+				}
+			}
+		}
+	}
+}

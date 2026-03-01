@@ -163,6 +163,16 @@ function pageInit() {
 
   obj[SOUND_PREVIEW_SLOT] = new Button("目前音色", "barrier", {
     updateType: UpdateType.empty,
+    onClick({ player }) {
+      const data = ChestUI.getData(player) as NoteData;
+      const soundName = sounds[data.soundIdx];
+      const blockType = noteBlockSoundMap[soundName] ?? "grass_block";
+      ChestUI.setPageItem(player, {
+        [SOUND_PREVIEW_SLOT]: ChestUI.newUIItem(`§e${soundName}`, blockType, {
+          lore: ["§r§7目前選擇的音色"],
+        }),
+      });
+    },
   });
 
   obj[SAVE_BTN_IDX] = new Button("新增音符", "lime_concrete", {

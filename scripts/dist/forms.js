@@ -1,4 +1,4 @@
-import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
+import { ModalFormData } from "@minecraft/server-ui";
 import { PDP_tmpPitchIdx, PDP_tmpSoundIdx } from "./constants";
 import { YBNote } from "./YBNote";
 import { sounds, PITCH, noteNames } from "./constants";
@@ -50,32 +50,93 @@ export async function form_modifyNote(player, entity, tempValues) {
     sendMessage(player, "§b已修改音符!");
 }
 export async function form_recordSetting(player) {
-    const form = new ActionFormData()
-        .title("§l§1錄製設定")
-        .button("§l儲存目前錄製")
-        .button("§l載入並播放")
-        .button("§l播放目前錄製")
-        .button(`§l${RecordManager.isRecording ? "停止" : "開始"}錄製`)
-        .button(`§l自動播放: ${RecordManager.autoPlayEnabled ? "§a開" : "§c關"}`);
-    const { canceled, selection } = await form.show(player);
+    const form = new ModalFormData().title("§l§1錄製設定");
+    // 錄製操作下拉選單
+    const recordActions = ["開始錄製", "停止錄製", "儲存錄製", "無"];
+    let recordDefaultIndex = 3; // 預設為 "無"
+    if (RecordManager.isRecording) {
+        recordDefaultIndex = 1; // 如果正在錄製，預設為 "停止錄製"
+    }
+    form.dropdown("§l錄製操作", recordActions, {
+        defaultValueIndex: recordDefaultIndex,
+    });
+    // 播放操作下拉選單
+    const playbackActions = ["播放目前錄製", "停止播放", "載入並播放", "無"];
+    let playbackDefaultIndex = 3; // 預設為 "無"
+    if (RecordManager.isPlaying) {
+        playbackDefaultIndex = 1; // 如果正在播放，預設為 "停止播放"
+    }
+    form.dropdown("§l播放操作", playbackActions, {
+        defaultValueIndex: playbackDefaultIndex,
+    });
+    // 自動播放開關
+    const wasAutoPlayEnabled = RecordManager.autoPlayEnabled;
+    form.toggle("§l自動播放", { defaultValue: wasAutoPlayEnabled });
+    // 播放速度
+    const wasSpeed = RecordManager.playbackSpeed;
+    form.textField("§l倍速播放", "請輸入播放速度", {
+        defaultValue: wasSpeed.toString(),
+    });
+    const { canceled, formValues } = await form.show(player);
     if (canceled)
         return;
-    switch (selection) {
-        case 0: // Save
-            form_saveRecord(player);
+    const [recordActionIndex, playbackActionIndex, autoPlayValue, speedStr] = formValues;
+    // 處理錄製操作
+    switch (recordActionIndex) {
+        case 0: // 開始錄製
+            if (!RecordManager.startRecording()) {
+                sendMessage(player, "§c已經在錄製中了!");
+            }
+            else {
+                sendMessage(player, `§b已開始錄製!`);
+            }
             break;
-        case 1: // Load
-            form_loadRecord(player);
+        case 1: // 停止錄製
+            if (!RecordManager.stopRecording()) {
+                sendMessage(player, "§c尚未開始錄製!");
+            }
+            else {
+                sendMessage(player, `§b已停止錄製!`);
+            }
             break;
-        case 2: // Play
+        case 2: // 儲存錄製
+            if (RecordManager.isRecording) {
+                sendMessage(player, "§c請先停止錄製!");
+            }
+            else if (RecordManager.currentData.length === 0) {
+                sendMessage(player, "§c沒有錄製資料可儲存!");
+            }
+            else {
+                form_saveRecord(player);
+            }
+            break;
+    }
+    // 處理播放操作
+    switch (playbackActionIndex) {
+        case 0: // 播放目前錄製
             RecordManager.play(player);
             break;
-        case 3: // Record
-            RecordManager.toggleRecording(player);
+        case 1: // 停止播放
+            RecordManager.stopPlayback(player);
             break;
-        case 4: // Auto Play
-            RecordManager.toggleAutoPlay(player);
+        case 2: // 載入並播放
+            form_loadRecord(player);
             break;
+    }
+    // 處理自動播放
+    if (autoPlayValue !== wasAutoPlayEnabled) {
+        RecordManager.toggleAutoPlay(player);
+    }
+    // 處理播放速度
+    const newSpeed = parseFloat(speedStr);
+    if (!isNaN(newSpeed) && newSpeed > 0) {
+        if (wasSpeed !== newSpeed) {
+            RecordManager.playbackSpeed = newSpeed;
+            sendMessage(player, `§b播放速度已設定為 ${newSpeed}x`);
+        }
+    }
+    else if (speedStr !== wasSpeed.toString()) {
+        sendMessage(player, `§c無效的速度值 "${speedStr}"，將維持 ${wasSpeed}x`);
     }
 }
 export async function form_saveRecord(player) {
@@ -101,16 +162,15 @@ export async function form_loadRecord(player) {
         return;
     }
     form.dropdown("§l選擇錄製", records);
-    form.textField("§l倍速播放", "", { defaultValue: "1" });
     const { canceled, formValues } = await form.show(player);
     if (canceled)
         return;
-    const [recordIndex, speedStr] = formValues;
+    const [recordIndex] = formValues;
     const recordName = records[recordIndex];
-    const speed = parseFloat(speedStr) || 1;
     const loadedData = RecordManager.load(recordName);
     if (loadedData) {
-        RecordManager.play(player, loadedData.data, loadedData.location, speed);
+        player.sendMessage(`§a成功載入錄製: ${recordName}`);
+        RecordManager.play(player, loadedData.data, loadedData.location);
     }
     else {
         player.sendMessage(`§c載入錄製 ${recordName} 失敗。`);

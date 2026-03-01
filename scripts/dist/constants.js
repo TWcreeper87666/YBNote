@@ -1,7 +1,7 @@
 import { MolangVariableMap, system } from "@minecraft/server";
 import { PlayerDP } from "./DynamicProperty";
 // pitch=0 是 C4，pitch=9 是 A4 (440Hz)，pitch=24 是 C5
-export const PITCH = Array.from({ length: 36 }, (_, i) => Math.pow(2, (i - 9) / 12));
+export const PITCH = Array.from({ length: 36 }, (_, i) => Math.pow(2, (i - 6) / 12));
 export const PITCH_COLOR = [
     { red: 0.467, green: 0.843, blue: 0.0 },
     { red: 0.547, green: 0.781, blue: 0.0 },

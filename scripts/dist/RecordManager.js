@@ -2,7 +2,19 @@ import { system, world } from "@minecraft/server";
 import { sendMessage, vectorOffset } from "./functions";
 import { YBNote } from "./YBNote";
 import { PITCH_COLOR, osu_mvm } from "./constants";
+import { WorldDP } from "./DynamicProperty";
+const WDP_autoPlayEnabled = new WorldDP("record_autoPlay", false);
+const WDP_playbackSpeed = new WorldDP("record_playbackSpeed", 1);
 export class RecordManager {
+    static get autoPlayEnabled() {
+        return WDP_autoPlayEnabled.get();
+    }
+    static get playbackSpeed() {
+        return WDP_playbackSpeed.get();
+    }
+    static set playbackSpeed(value) {
+        WDP_playbackSpeed.set(value);
+    }
     // --- Recording ---
     static startRecording() {
         if (this.isRecording)
@@ -38,7 +50,16 @@ export class RecordManager {
         });
     }
     // --- Playback ---
-    static async play(player, data, location, speed = 1) {
+    static stopPlayback(player) {
+        if (!this.isPlaying)
+            return false;
+        this.isPlaying = false;
+        if (player) {
+            sendMessage(player, "§b已中斷播放!");
+        }
+        return true;
+    }
+    static async play(player, data, location) {
         const playData = data ?? this.currentData;
         if (playData.length === 0) {
             sendMessage(player, "§c沒有可播放的錄製資料。");
@@ -57,10 +78,14 @@ export class RecordManager {
         const sortedData = [...playData].sort((a, b) => a.tick - b.tick);
         let lastTick = 0;
         for (const record of sortedData) {
-            const waitTicks = Math.floor((record.tick - lastTick) / speed);
+            if (!this.isPlaying)
+                break;
+            const waitTicks = Math.floor((record.tick - lastTick) / this.playbackSpeed);
             if (waitTicks > 0) {
                 await system.waitTicks(waitTicks);
             }
+            if (!this.isPlaying)
+                break;
             lastTick = record.tick;
             const entity = world.getEntity(record.entityId);
             if (entity) {
@@ -80,9 +105,12 @@ export class RecordManager {
                 }
             }
         }
-        await system.waitTicks(60);
-        this.isPlaying = false;
-        sendMessage(player, "§b播放結束!");
+        if (this.isPlaying) {
+            // Playback completed normally
+            await system.waitTicks(60);
+            this.isPlaying = false;
+            sendMessage(player, "§b播放結束!");
+        }
     }
     // --- Data Management (Save/Load) ---
     static save(name, location) {
@@ -129,13 +157,13 @@ export class RecordManager {
     }
     // --- Auto Play ---
     static toggleAutoPlay(player) {
-        this.autoPlayEnabled = !this.autoPlayEnabled;
-        sendMessage(player, `§b自動播放模式已${this.autoPlayEnabled ? "§a開啟" : "§c關"}`);
-        return this.autoPlayEnabled;
+        const newValue = !this.autoPlayEnabled;
+        WDP_autoPlayEnabled.set(newValue);
+        sendMessage(player, `§b自動播放模式已${newValue ? "§a開啟" : "§c關"}`);
+        return newValue;
     }
 }
 RecordManager.isRecording = false;
 RecordManager.isPlaying = false;
 RecordManager.startRecordTick = 0;
 RecordManager.currentData = [];
-RecordManager.autoPlayEnabled = false;

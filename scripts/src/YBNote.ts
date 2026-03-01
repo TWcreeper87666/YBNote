@@ -67,20 +67,39 @@ export class YBNote {
             entity.dimension.spawnParticle('yb:note_play', entity.getHeadLocation(), mvm)
         } catch { }
 
-        if (!once) {
-            entity.playAnimation('animation.note_entity.played', { nextState: 'test', blendOutTime: 10000 })
+        if (once) {
+            // For one-shot plays (pitch change, auto-play), play a brief animation and color flash.
+            entity.playAnimation('animation.note_entity.played', { nextState: 'nope', blendOutTime: 0.25 });
 
-            entity.setProperty('yb:color_r', 1)
-            entity.setProperty('yb:color_g', 1)
-            entity.setProperty('yb:color_b', 1)
+            entity.setProperty('yb:color_r', 1);
+            entity.setProperty('yb:color_g', 1);
+            entity.setProperty('yb:color_b', 1);
 
-            entityPlayedMap.set(entity.id, true)
+            system.runTimeout(() => {
+                try {
+                    // Revert color after animation. Entity might be invalid by then.
+                    const color = PITCH_COLOR[pitchIdx];
+                    entity.setProperty('yb:color_r', color.red);
+                    entity.setProperty('yb:color_g', color.green);
+                    entity.setProperty('yb:color_b', color.blue);
+                } catch {}
+            }, 5); // 5 ticks = 0.25s
+        } else {
+            // For sustained play, start a long animation and mark as played.
+            // YBNote.stop() will handle reverting the state.
+            entity.playAnimation('animation.note_entity.played', { nextState: 'nope', blendOutTime: 10000 });
+
+            entity.setProperty('yb:color_r', 1);
+            entity.setProperty('yb:color_g', 1);
+            entity.setProperty('yb:color_b', 1);
+
+            entityPlayedMap.set(entity.id, true);
         }
     }
 
     static stop(entity: Entity) {
         entityPlayedMap.set(entity.id, false)
-        entity.playAnimation('animation.note_entity.played', { nextState: 'test', blendOutTime: 0 })
+        entity.playAnimation('animation.note_entity.played', { nextState: 'nope', blendOutTime: 0 })
 
         const pitchIdx = EDP_pitchIdx.get(entity)
         const color = PITCH_COLOR[pitchIdx]

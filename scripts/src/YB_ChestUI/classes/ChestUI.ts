@@ -337,7 +337,7 @@ export class ChestUI {
         if (entity?.id !== target.id) return;
         const page = this.getPage(player);
         const container_e = entity.getComponent("inventory").container;
-        page.open({ player, container_e });
+        page.open?.({ player, container_e });
       },
     );
 

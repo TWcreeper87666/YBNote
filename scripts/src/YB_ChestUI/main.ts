@@ -45,7 +45,7 @@ const SOUND_SLOT_RIGHT_ARROW = 41;
 const SOUND_PREVIEW_SLOT = 43;
 
 function getNoteName(pitchIdx: number) {
-  return noteNames[pitchIdx % 12];
+  return noteNames[pitchIdx % 12] + `§${Math.floor(pitchIdx / 12)}§r`;
 }
 
 function getNoteAndColor(pitchIdx: number) {

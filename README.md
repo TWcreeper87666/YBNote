@@ -37,4 +37,4 @@
 
 ## BUG
 - [x] chestUI編輯entity 不切換手中物品不會更新pitch, sound
-- [ ] 手機版 ChestUI 無法挑選音調?
+- [x] 手機版 ChestUI 無法挑選音調?

@@ -12,7 +12,7 @@
                 "texture": "record_pigstep"
             },
             "minecraft:display_name": {
-                "value": "錄製設定"
+                "value": "Recording Settings"
             },
             "minecraft:use_animation": "eat",
             "minecraft:use_modifiers": {

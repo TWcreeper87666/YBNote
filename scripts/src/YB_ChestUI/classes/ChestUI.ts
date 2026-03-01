@@ -65,7 +65,7 @@ export class ChestUI {
     const entity = this.getEntity(player);
 
     if (preSize !== (page.size ?? this.config.defaultPageSize)) {
-      sendMessage(player, "請重新開啟介面!");
+      sendMessage(player, "Please reopen the UI!");
       return this.#spawnEntity(player, page);
     }
     if (!entity) return this.#spawnEntity(player, page);
@@ -310,7 +310,7 @@ export class ChestUI {
     if (!entity) return;
     const { x, y, z } = entity.location;
     entity.teleport({ x, y: y + 100, z });
-    sendMessage(player, "請重新開啟介面!");
+    sendMessage(player, "Please reopen the UI!");
   }
 
   static init() {

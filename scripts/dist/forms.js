@@ -6,12 +6,12 @@ import { sendMessage } from "./functions";
 import { RecordManager } from "./RecordManager";
 export async function form_addNote(player, tempValues) {
     const form = new ModalFormData()
-        .title("§l§1創建音符")
-        .dropdown("§l音調", PITCH.map((_, i) => `${i} ${noteNames[i % 12]}`), { defaultValueIndex: tempValues?.pitchIdx })
-        .dropdown("§l音源", sounds, {
+        .title("§l§1Create Note")
+        .dropdown("§lPitch", PITCH.map((_, i) => `${i} ${noteNames[i % 12]}`), { defaultValueIndex: tempValues?.pitchIdx })
+        .dropdown("§lSound", sounds, {
         defaultValueIndex: tempValues?.soundIdx ?? sounds.length - 1,
     })
-        .toggle("§l預覽", { defaultValue: tempValues?.preview });
+        .toggle("§lPreview", { defaultValue: tempValues?.preview });
     const { canceled, formValues } = await form.show(player);
     if (canceled)
         return;
@@ -24,17 +24,17 @@ export async function form_addNote(player, tempValues) {
     YBNote.spawn(pitchIdx, soundIdx, player);
     PDP_tmpPitchIdx.set(player, pitchIdx);
     PDP_tmpSoundIdx.set(player, soundIdx);
-    sendMessage(player, "§b已創建音符!");
+    sendMessage(player, "§bNote created!");
 }
 export async function form_modifyNote(player, entity, tempValues) {
     const { pitchIdx: entityPitchIdx, soundIdx: entitySoundIdx } = YBNote.info(entity);
     const form = new ModalFormData()
-        .title("§l§1修改音符")
+        .title("§l§1Edit Note")
         .dropdown("§l音調", PITCH.map((_, i) => `${i} ${noteNames[i % 12]}`), { defaultValueIndex: tempValues?.pitchIdx ?? entityPitchIdx })
-        .dropdown("§l音源", sounds, {
+        .dropdown("§lSound", sounds, {
         defaultValueIndex: tempValues?.soundIdx ?? entitySoundIdx,
     })
-        .toggle("§l預覽", { defaultValue: tempValues?.preview });
+        .toggle("§lPreview", { defaultValue: tempValues?.preview });
     const { canceled, formValues } = await form.show(player);
     if (canceled)
         return;
@@ -47,99 +47,99 @@ export async function form_modifyNote(player, entity, tempValues) {
     YBNote.update(entity, { pitchIdx, soundIdx });
     PDP_tmpPitchIdx.set(player, pitchIdx);
     PDP_tmpSoundIdx.set(player, soundIdx);
-    sendMessage(player, "§b已修改音符!");
+    sendMessage(player, "§bNote updated!");
 }
 export async function form_recordSetting(player) {
-    const form = new ModalFormData().title("§l§1錄製設定");
-    // 錄製操作下拉選單
-    const recordActions = ["開始錄製", "停止錄製", "儲存錄製", "無"];
-    let recordDefaultIndex = 3; // 預設為 "無"
+    const form = new ModalFormData().title("§l§1Recording Settings");
+    // Record action dropdown
+    const recordActions = ["Start Recording", "Stop Recording", "Save Recording", "None"];
+    let recordDefaultIndex = 3; // default to "None"
     if (RecordManager.isRecording) {
-        recordDefaultIndex = 1; // 如果正在錄製，預設為 "停止錄製"
+        recordDefaultIndex = 1; // if recording, default to "Stop Recording"
     }
-    form.dropdown("§l錄製操作", recordActions, {
+    form.dropdown("§lRecord Action", recordActions, {
         defaultValueIndex: recordDefaultIndex,
     });
-    // 播放操作下拉選單
-    const playbackActions = ["播放目前錄製", "停止播放", "載入並播放", "無"];
-    let playbackDefaultIndex = 3; // 預設為 "無"
+    // Playback action dropdown
+    const playbackActions = ["Play Current Recording", "Stop Playback", "Load & Play", "None"];
+    let playbackDefaultIndex = 3; // default to "None"
     if (RecordManager.isPlaying) {
-        playbackDefaultIndex = 1; // 如果正在播放，預設為 "停止播放"
+        playbackDefaultIndex = 1; // if playing, default to "Stop Playback"
     }
-    form.dropdown("§l播放操作", playbackActions, {
+    form.dropdown("§lPlayback Action", playbackActions, {
         defaultValueIndex: playbackDefaultIndex,
     });
-    // 練習模式
-    const practiceModes = ["Osu", "掉落", "自動播放"];
-    form.dropdown("§l練習模式", practiceModes, {
+    // Practice modes
+    const practiceModes = ["Osu", "Lane", "Auto-play"];
+    form.dropdown("§lPractice Mode", practiceModes, {
         defaultValueIndex: RecordManager.playbackMode,
     });
-    // 播放速度
+    // Playback speed
     const wasSpeed = RecordManager.playbackSpeed;
-    form.textField("§l倍速播放", "請輸入播放速度", {
+    form.textField("§lPlayback Speed", "Enter playback speed", {
         defaultValue: wasSpeed.toString(),
     });
     const { canceled, formValues } = await form.show(player);
     if (canceled)
         return;
     const [recordActionIndex, playbackActionIndex, practiceModeIndex, speedStr,] = formValues;
-    // 處理錄製操作
+    // Handle record action
     switch (recordActionIndex) {
-        case 0: // 開始錄製
+        case 0: // Start recording
             if (!RecordManager.startRecording()) {
-                sendMessage(player, "§c已經在錄製中了!");
+                sendMessage(player, "§cAlready recording!");
             }
             else {
-                sendMessage(player, `§b已開始錄製!`);
+                sendMessage(player, `§bRecording started!`);
             }
             break;
-        case 1: // 停止錄製
+        case 1: // Stop recording
             if (!RecordManager.stopRecording()) {
-                sendMessage(player, "§c尚未開始錄製!");
+                sendMessage(player, "§cNot recording!");
             }
             else {
-                sendMessage(player, `§b已停止錄製!`);
+                sendMessage(player, `§bRecording stopped!`);
             }
             break;
-        case 2: // 儲存錄製
+        case 2: // Save recording
             if (RecordManager.isRecording) {
-                sendMessage(player, "§c請先停止錄製!");
+                sendMessage(player, "§cPlease stop recording first!");
             }
             else if (RecordManager.currentData.length === 0) {
-                sendMessage(player, "§c沒有錄製資料可儲存!");
+                sendMessage(player, "§cNo recorded data to save!");
             }
             else {
                 form_saveRecord(player);
             }
             break;
     }
-    // 處理播放操作
+    // Handle playback action
     switch (playbackActionIndex) {
-        case 0: // 播放目前錄製
+        case 0: // Play current recording
             RecordManager.play(player);
             break;
-        case 1: // 停止播放
+        case 1: // Stop playback
             RecordManager.stopPlayback(player);
             break;
-        case 2: // 載入並播放
+        case 2: // Load & play
             form_loadRecord(player);
             break;
     }
-    // 處理練習模式
+    // Handle practice mode
     if (RecordManager.playbackMode !== practiceModeIndex) {
         RecordManager.playbackMode = practiceModeIndex;
-        sendMessage(player, `§b練習模式已設定為 ${practiceModes[practiceModeIndex]}`);
+        sendMessage(player, `§bPractice mode set to ${practiceModes[practiceModeIndex]}`);
     }
-    // 處理播放速度
+    // Handle playback speed
     const newSpeed = parseFloat(speedStr);
     if (!isNaN(newSpeed) && newSpeed > 0) {
         if (wasSpeed !== newSpeed) {
             RecordManager.playbackSpeed = newSpeed;
-            sendMessage(player, `§b播放速度已設定為 ${newSpeed}x`);
+            sendMessage(player, `§bPlayback speed set to ${newSpeed}x`);
         }
     }
     else if (speedStr !== wasSpeed.toString()) {
-        sendMessage(player, `§c無效的速度值 "${speedStr}"，將維持 ${wasSpeed}x`);
+        sendMessage(player, `§cInvalid speed value "${speedStr}", keeping ${wasSpeed}x`);
     }
 }
 export async function form_saveRecord(player) {

@@ -2,8 +2,8 @@
 	"format_version": 2,
 	"header": {
 		"description": "byTWc",
-		"name": "YBNote",
-		"uuid": "0574a206-33b1-475f-9fc5-fee04002fac2",
+		"name": "YBNoteEng",
+		"uuid": "1292c0b2-0daa-497b-81c5-e00b842b56fb",
 		"version": [
 			8,
 			7,
@@ -17,7 +17,7 @@
 	},
 	"modules": [
 		{
-			"uuid": "e7274039-d856-40bf-8bbc-50f86d1c4673",
+			"uuid": "f042ad72-55d3-4b3c-b21d-515acfd34331",
 			"version": [
 				1,
 				0,

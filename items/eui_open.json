@@ -10,7 +10,7 @@
     "components": {
       "minecraft:icon": "experience_bottle",
       "minecraft:display_name": {
-        "value": "開啟箱子UI"
+        "value": "Open Chest UI"
       },
       "minecraft:max_stack_size": 1,
       "minecraft:hover_text_color": "light_purple",

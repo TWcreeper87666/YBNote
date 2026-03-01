@@ -37,7 +37,7 @@ function getNoteAndColor(pitchIdx) {
     return { note, color };
 }
 ChestUI.setUIPage("piano", new Page(pageInit(), {
-    displayName: "音符編輯",
+    displayName: "Note Editor",
     size: Size.piano,
     start: ({ player }) => {
         let pitchIdx, soundIdx;
@@ -71,10 +71,10 @@ ChestUI.setUIPage("piano", new Page(pageInit(), {
             updateFunc({ player, idx: data.pitchIdx, soundIdx: data.soundIdx });
             updateSound(player, data, false);
             ChestUI.setData(player, data);
-            slot.nameTag = "§r修改音符";
+            slot.nameTag = "§rEdit Note";
         }
         else {
-            slot.nameTag = "§r新增音符";
+            slot.nameTag = "§rAdd Note";
         }
     },
 }));
@@ -129,7 +129,7 @@ function pageInit() {
             updateSound(player, data, false);
         },
     });
-    obj[SOUND_PREVIEW_SLOT] = new Button("目前音色", "barrier", {
+    obj[SOUND_PREVIEW_SLOT] = new Button("Current Sound", "barrier", {
         updateType: UpdateType.empty,
         clickSound: "",
         onClick({ player }) {
@@ -138,13 +138,13 @@ function pageInit() {
             const blockType = noteBlockSoundMap[soundName] ?? "grass_block";
             ChestUI.setPageItem(player, {
                 [SOUND_PREVIEW_SLOT]: ChestUI.newUIItem(`§e${soundName}`, blockType, {
-                    lore: ["§r§7目前選擇的音色"],
+                    lore: ["§r§7Currently selected sound"],
                 }),
             });
             player.playSound(sounds[data.soundIdx], { pitch: PITCH[data.pitchIdx] });
         },
     });
-    obj[SAVE_BTN_IDX] = new Button("新增音符", "lime_concrete", {
+    obj[SAVE_BTN_IDX] = new Button("Add Note", "lime_concrete", {
         onClick: ({ player }) => {
             const { pitchIdx, soundIdx } = ChestUI.getData(player);
             const entity = YBNote.get(player);
@@ -201,7 +201,7 @@ function updateSound(player, data, playSound = true) {
     // Update preview slot
     const soundName = sounds[data.soundIdx];
     const blockType = noteBlockSoundMap[soundName] ?? "grass_block";
-    itemsToUpdate[SOUND_PREVIEW_SLOT] = ChestUI.newUIItem(`§e${soundName}`, blockType, { lore: ["§r§7目前選擇的音色"] });
+    itemsToUpdate[SOUND_PREVIEW_SLOT] = ChestUI.newUIItem(`§e${soundName}`, blockType, { lore: ["§r§7Currently selected sound"] });
     ChestUI.setPageItem(player, itemsToUpdate);
 }
 function updateFunc({ player, idx, soundIdx, }) {

@@ -5,14 +5,14 @@ import { note_mvm, PDP_tmpPitchIdx, PDP_tmpSoundIdx, PITCH, PITCH_COLOR, REACH_D
 import "./YB_ChestUI/main";
 import { YBNote, entityPlayedMap } from "./YBNote";
 import { RecordManager } from "./RecordManager";
-// === 狀態紀錄 ===
-// 玩家是否正在使用播放物品（長按右鍵）
+// === State Tracking ===
+// Whether a player is using the play item (holding right-click)
 export const isPlayerPlaying = new Map();
-// 玩家當前正在播放的實體集合
+// Set of currently playing entities per player
 export const activeNotesByPlayer = new Map();
-// 玩家當前拿取中的實體
+// Entity currently held by a player
 const heldEntityByPlayer = new Map();
-/** 停止播放音符並清除狀態 */
+/** Stop playing a note and clear its state */
 export function stopNoteEntity(player, entityId) {
     entityPlayedMap.set(entityId, false);
     const activeNotes = activeNotesByPlayer.get(player.id);
@@ -24,7 +24,7 @@ export function stopNoteEntity(player, entityId) {
     if (entity)
         YBNote.stop(entity);
 }
-/** 將實體放到玩家視線前方（編輯模式用） */
+/** Move entity to front of player's view (used in edit mode) */
 export function moveEntityToView(player, entity) {
     const view = player.getViewDirection();
     const head = player.getHeadLocation();
@@ -73,7 +73,7 @@ world.beforeEvents.playerInteractWithEntity.subscribe(async ({ player, target, i
         type: "yb:note_entity",
         maxDistance: REACH_DISTANCE,
     });
-    // 🔹 收集所有命中的實體 ID
+    // 🔹 Collect all hit entity IDs
     const hitSet = new Set();
     for (const info of hitInfos) {
         if (info?.entity)
@@ -81,7 +81,7 @@ world.beforeEvents.playerInteractWithEntity.subscribe(async ({ player, target, i
     }
     isPlayerPlaying.set(player.id, true); // use item will set too, not sure should this exist
     await system.waitTicks(1);
-    // === 播放邏輯（改為播放多個） ===
+    // === Play logic (play multiple) ===
     if (hitSet.size > 0) {
         for (const id of hitSet) {
             if (!entityPlayedMap.get(id)) {
@@ -97,7 +97,7 @@ world.beforeEvents.playerInteractWithEntity.subscribe(async ({ player, target, i
         }
     }
 });
-// 玩家攻擊實體（調整音高或刪除）
+// Player hits an entity (change pitch or delete)
 world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => {
     if (!(damagingEntity instanceof Player))
         return;
@@ -123,12 +123,12 @@ world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => {
         hitEntity.remove();
     }
 });
-// 玩家放開右鍵 → 停止播放
+// Player releases right-click -> stop playing
 world.afterEvents.itemStopUse.subscribe(({ source }) => {
     isPlayerPlaying.set(source.id, false);
     heldEntityByPlayer.delete(source.id);
 });
-// 玩家離開或實體被刪除
+// Player leaves or entity is removed
 world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     activeNotesByPlayer.delete(playerId);
     isPlayerPlaying.delete(playerId);
@@ -136,7 +136,7 @@ world.afterEvents.playerLeave.subscribe(({ playerId }) => {
 world.afterEvents.entityRemove.subscribe(({ removedEntityId }) => {
     entityPlayedMap.delete(removedEntityId);
 });
-// === 主更新循環 ===
+// === Main update loop ===
 system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
         const isPlaying = isPlayerPlaying.get(player.id);

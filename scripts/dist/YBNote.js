@@ -42,9 +42,9 @@ export class YBNote {
     static async play(entity, once = false) {
         const pitchIdx = EDP_pitchIdx.get(entity);
         const sound = EDP_sound.get(entity);
-        // 1. 播放音效
+        // 1. Play sound
         entity.dimension.playSound(sound, entity.location, { pitch: PITCH[pitchIdx] });
-        // 2. 播放粒子效果
+        // 2. Spawn particle effects
         try {
             const mvm = new MolangVariableMap();
             mvm.setColorRGBA('color', { ...PITCH_COLOR[pitchIdx], alpha: 1 });

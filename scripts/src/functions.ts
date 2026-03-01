@@ -48,6 +48,6 @@ export function vectorNormalize(vector: Vector3) {
 
 /** @param soundId [default] random.orb */
 export function sendMessage(target: Player, message: string, soundId = 'random.orb') {
-    target.onScreenDisplay.setActionBar(message) // §l 讓actionbar歪掉的罪魁禍首lol
+    target.onScreenDisplay.setActionBar(message) // §l may cause action bar alignment issues (formatting marker)
     if (soundId) target.playSound(soundId)
 }

@@ -45,7 +45,7 @@ export class ChestUI {
         __classPrivateFieldGet(this, _a, "m", _ChestUI_setPageName).call(this, player, name);
         const entity = this.getEntity(player);
         if (preSize !== (page.size ?? this.config.defaultPageSize)) {
-            sendMessage(player, "請重新開啟介面!");
+            sendMessage(player, "Please reopen the UI!");
             return __classPrivateFieldGet(this, _a, "m", _ChestUI_spawnEntity).call(this, player, page);
         }
         if (!entity)
@@ -195,7 +195,7 @@ export class ChestUI {
             return;
         const { x, y, z } = entity.location;
         entity.teleport({ x, y: y + 100, z });
-        sendMessage(player, "請重新開啟介面!");
+        sendMessage(player, "Please reopen the UI!");
     }
     static init() {
         world.afterEvents.entityLoad.subscribe(({ entity }) => {

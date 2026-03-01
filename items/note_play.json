@@ -12,7 +12,7 @@
                 "texture": "spyglass"
             },
             "minecraft:display_name": {
-                "value": "音符播放"
+                "value": "Play Note"
             },
             "minecraft:use_animation": "eat",
             "minecraft:use_modifiers": {

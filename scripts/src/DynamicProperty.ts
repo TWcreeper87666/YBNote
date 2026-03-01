@@ -5,7 +5,7 @@ export class PlayerDP<T extends string | number | boolean | object> {
     readonly defaultValue: T;
 
     constructor(name: string, defaultValue: T) {
-        this.name = `yb:${name.replace(/^yb:/, '')}`; // 移除開頭的 yb: 避免重複
+        this.name = `yb:${name.replace(/^yb:/, '')}`; // remove leading 'yb:' to avoid duplication
         this.defaultValue = defaultValue;
     }
 
@@ -42,7 +42,7 @@ export class EntityDP<T extends string | number | boolean | object> {
     readonly defaultValue: T;
 
     constructor(name: string, defaultValue: T) {
-        this.name = `yb:${name.replace(/^yb:/, '')}`; // 移除開頭的 yb: 避免重複
+        this.name = `yb:${name.replace(/^yb:/, '')}`; // remove leading 'yb:' to avoid duplication
         this.defaultValue = defaultValue;
     }
 
@@ -79,7 +79,7 @@ export class WorldDP<T extends string | number | boolean | object> {
     readonly defaultValue: T;
 
     constructor(name: string, defaultValue: T) {
-        this.name = `yb:${name.replace(/^yb:/, '')}`; // 移除開頭的 yb: 避免重複
+        this.name = `yb:${name.replace(/^yb:/, '')}`; // remove leading 'yb:' to avoid duplication
         this.defaultValue = defaultValue;
     }
 

@@ -3,7 +3,7 @@ import { sendMessage, vectorOffset } from "./functions";
 import { YBNote } from "./YBNote";
 import { PITCH_COLOR, osu_mvm } from "./constants";
 import { WorldDP } from "./DynamicProperty";
-// 練習模式: 0=Osu, 1=掉落, 2=自動播放
+// Practice mode: 0=Osu, 1=Lane, 2=Auto-play
 const WDP_playbackMode = new WorldDP("record_playbackMode", 0);
 const WDP_playbackSpeed = new WorldDP("record_playbackSpeed", 1);
 export class RecordManager {
@@ -37,11 +37,11 @@ export class RecordManager {
     static toggleRecording(player) {
         if (this.isRecording) {
             this.stopRecording();
-            sendMessage(player, `§b已停止錄製!`);
+            sendMessage(player, `§bRecording stopped!`);
         }
         else {
             this.startRecording();
-            sendMessage(player, `§b已開始錄製!`);
+            sendMessage(player, `§bRecording started!`);
         }
         return this.isRecording;
     }
@@ -59,18 +59,18 @@ export class RecordManager {
             return false;
         this.isPlaying = false;
         if (player) {
-            sendMessage(player, "§b已中斷播放!");
+            sendMessage(player, "§bPlayback stopped!");
         }
         return true;
     }
     static async play(player, data, location) {
         const playData = data ?? this.currentData;
         if (playData.length === 0) {
-            sendMessage(player, "§c沒有可播放的錄製資料。");
+            sendMessage(player, "§cNo recorded data to play.");
             return;
         }
         if (this.isPlaying) {
-            sendMessage(player, "§c目前正在播放錄製中，無法重複播放!");
+            sendMessage(player, "§cAlready playing a recording; cannot replay.");
             return;
         }
         if (location) {
@@ -78,7 +78,7 @@ export class RecordManager {
             await system.waitTicks(20);
         }
         this.isPlaying = true;
-        sendMessage(player, "§b已開始播放!");
+        sendMessage(player, "§bPlayback started!");
         const sortedData = [...playData].sort((a, b) => a.tick - b.tick);
         let lastTick = 0;
         for (const record of sortedData) {
@@ -95,11 +95,11 @@ export class RecordManager {
             if (entity) {
                 const mode = this.playbackMode;
                 if (mode === 2) {
-                    // 自動播放開啟：播放音效
+                    // Auto-play enabled: play sound
                     YBNote.play(entity, true);
                 }
                 else {
-                    // 練習模式：顯示粒子效果
+                    // Practice mode: show particle effects
                     const { pitchIdx } = YBNote.info(entity);
                     osu_mvm.setColorRGBA("color", {
                         ...PITCH_COLOR[pitchIdx],
@@ -120,7 +120,7 @@ export class RecordManager {
             // Playback completed normally
             await system.waitTicks(60);
             this.isPlaying = false;
-            sendMessage(player, "§b播放結束!");
+            sendMessage(player, "§bPlayback finished!");
         }
     }
     // --- Data Management (Save/Load) ---

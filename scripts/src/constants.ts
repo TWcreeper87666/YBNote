@@ -1,7 +1,7 @@
 import { MolangVariableMap, system } from "@minecraft/server";
 import { PlayerDP } from "./DynamicProperty";
 
-// pitch=0 是 C4，pitch=9 是 A4 (440Hz)，pitch=24 是 C5
+// pitch=0 is C4, pitch=9 is A4 (440Hz), pitch=24 is C5
 export const PITCH: number[] = Array.from({ length: 36 }, (_, i) =>
   Math.pow(2, (i - 6) / 12),
 );
@@ -87,7 +87,7 @@ export const PDP_tmpSoundIdx = new PlayerDP<number>(
   sounds.length - 1,
 );
 
-// === 粒子效果 Molang ===
+// === Particle effects Molang ===
 export let circle_move_mvm: MolangVariableMap;
 export let osu_mvm: MolangVariableMap;
 export let bg_glow_mvm: MolangVariableMap;
@@ -102,7 +102,7 @@ system.run(() => {
     alpha: 1,
   });
   circle_move_mvm.setSpeedAndDirection("sad", 0, { x: 0, y: 0, z: 0 });
-  circle_move_mvm.setFloat("size", 1); // 0.2
+  circle_move_mvm.setFloat("size", 1); // default size (was 0.2 in testing)
   circle_move_mvm.setFloat("max_lifetime", 1);
 
   osu_mvm = new MolangVariableMap();

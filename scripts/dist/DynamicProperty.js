@@ -1,7 +1,7 @@
 import { world } from "@minecraft/server";
 export class PlayerDP {
     constructor(name, defaultValue) {
-        this.name = `yb:${name.replace(/^yb:/, '')}`; // 移除開頭的 yb: 避免重複
+        this.name = `yb:${name.replace(/^yb:/, '')}`; // remove leading 'yb:' to avoid duplication
         this.defaultValue = defaultValue;
     }
     set(player, value) {
@@ -30,7 +30,7 @@ export class PlayerDP {
 }
 export class EntityDP {
     constructor(name, defaultValue) {
-        this.name = `yb:${name.replace(/^yb:/, '')}`; // 移除開頭的 yb: 避免重複
+        this.name = `yb:${name.replace(/^yb:/, '')}`; // remove leading 'yb:' to avoid duplication
         this.defaultValue = defaultValue;
     }
     set(entity, value) {
@@ -59,7 +59,7 @@ export class EntityDP {
 }
 export class WorldDP {
     constructor(name, defaultValue) {
-        this.name = `yb:${name.replace(/^yb:/, '')}`; // 移除開頭的 yb: 避免重複
+        this.name = `yb:${name.replace(/^yb:/, '')}`; // remove leading 'yb:' to avoid duplication
         this.defaultValue = defaultValue;
     }
     set(value) {

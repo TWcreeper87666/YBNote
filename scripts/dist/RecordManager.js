@@ -3,17 +3,21 @@ import { sendMessage, vectorOffset } from "./functions";
 import { YBNote } from "./YBNote";
 import { PITCH_COLOR, osu_mvm } from "./constants";
 import { WorldDP } from "./DynamicProperty";
-const WDP_autoPlayEnabled = new WorldDP("record_autoPlay", false);
+// 練習模式: 0=Osu, 1=掉落, 2=自動播放
+const WDP_playbackMode = new WorldDP("record_playbackMode", 0);
 const WDP_playbackSpeed = new WorldDP("record_playbackSpeed", 1);
 export class RecordManager {
-    static get autoPlayEnabled() {
-        return WDP_autoPlayEnabled.get();
+    static get playbackMode() {
+        return WDP_playbackMode.get();
     }
     static get playbackSpeed() {
         return WDP_playbackSpeed.get();
     }
     static set playbackSpeed(value) {
         WDP_playbackSpeed.set(value);
+    }
+    static set playbackMode(value) {
+        WDP_playbackMode.set(value);
     }
     // --- Recording ---
     static startRecording() {
@@ -89,19 +93,26 @@ export class RecordManager {
             lastTick = record.tick;
             const entity = world.getEntity(record.entityId);
             if (entity) {
-                if (this.autoPlayEnabled) {
+                const mode = this.playbackMode;
+                if (mode === 2) {
                     // 自動播放開啟：播放音效
                     YBNote.play(entity, true);
                 }
                 else {
-                    // 自動播放關閉：顯示粒子效果
+                    // 練習模式：顯示粒子效果
                     const { pitchIdx } = YBNote.info(entity);
                     osu_mvm.setColorRGBA("color", {
                         ...PITCH_COLOR[pitchIdx],
                         alpha: 1,
                     });
-                    entity.dimension.spawnParticle("yb:note_osu", // 'yb:note_lane_down'
-                    vectorOffset(entity.getHeadLocation(), 0, 0.05), osu_mvm);
+                    if (mode === 0) {
+                        // "Osu"
+                        entity.dimension.spawnParticle("yb:note_osu", entity.getHeadLocation(), osu_mvm);
+                    }
+                    else {
+                        // "lane" (mode === 1)
+                        entity.dimension.spawnParticle("yb:note_lane_down", vectorOffset(entity.getHeadLocation(), 0, 0.05), osu_mvm);
+                    }
                 }
             }
         }
@@ -154,13 +165,6 @@ export class RecordManager {
             .getDynamicPropertyIds()
             .filter((id) => id.startsWith("yb:note_record_"))
             .map((id) => id.replace("yb:note_record_", ""));
-    }
-    // --- Auto Play ---
-    static toggleAutoPlay(player) {
-        const newValue = !this.autoPlayEnabled;
-        WDP_autoPlayEnabled.set(newValue);
-        sendMessage(player, `§b自動播放模式已${newValue ? "§a開啟" : "§c關"}`);
-        return newValue;
     }
 }
 RecordManager.isRecording = false;

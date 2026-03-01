@@ -69,9 +69,11 @@ export async function form_recordSetting(player) {
     form.dropdown("§l播放操作", playbackActions, {
         defaultValueIndex: playbackDefaultIndex,
     });
-    // 自動播放開關
-    const wasAutoPlayEnabled = RecordManager.autoPlayEnabled;
-    form.toggle("§l自動播放", { defaultValue: wasAutoPlayEnabled });
+    // 練習模式
+    const practiceModes = ["Osu", "掉落", "自動播放"];
+    form.dropdown("§l練習模式", practiceModes, {
+        defaultValueIndex: RecordManager.playbackMode,
+    });
     // 播放速度
     const wasSpeed = RecordManager.playbackSpeed;
     form.textField("§l倍速播放", "請輸入播放速度", {
@@ -80,7 +82,7 @@ export async function form_recordSetting(player) {
     const { canceled, formValues } = await form.show(player);
     if (canceled)
         return;
-    const [recordActionIndex, playbackActionIndex, autoPlayValue, speedStr] = formValues;
+    const [recordActionIndex, playbackActionIndex, practiceModeIndex, speedStr,] = formValues;
     // 處理錄製操作
     switch (recordActionIndex) {
         case 0: // 開始錄製
@@ -123,9 +125,10 @@ export async function form_recordSetting(player) {
             form_loadRecord(player);
             break;
     }
-    // 處理自動播放
-    if (autoPlayValue !== wasAutoPlayEnabled) {
-        RecordManager.toggleAutoPlay(player);
+    // 處理練習模式
+    if (RecordManager.playbackMode !== practiceModeIndex) {
+        RecordManager.playbackMode = practiceModeIndex;
+        sendMessage(player, `§b練習模式已設定為 ${practiceModes[practiceModeIndex]}`);
     }
     // 處理播放速度
     const newSpeed = parseFloat(speedStr);

@@ -20,9 +20,9 @@
 ## 下載
 
 ### YBNote
-<!-- - [YB_ChestUI_bp.mcpack](https://drive.google.com/file/d/1mJqsiihfAd2w7Ks2fSigCgk4fO5bAoUq/view?usp=sharing)
-- [YB_ChestUI_rp.mcpack](https://drive.google.com/file/d/1Jcxw4wSeKuQIIOPivXvKCtBjbooeu-__/view?usp=sharing)
-- [YB_ChestUI.mcaddon](https://drive.google.com/file/d/1A11UyD0mg-YuNSTtIXQc6HwunoeGhdzn/view?usp=drive_link) -->
+- [YBNote_bp.mcpack](https://drive.google.com/file/d/1cEJLz34Z_Ew6tnSy6V_8gUhtMV9ouyuH/view?usp=sharing)
+- [YBNote_rp.mcpack](https://drive.google.com/file/d/1kJLOiTzUJMy9xnfs0Gahb9rHi5gAzCE9/view?usp=sharing)
+- [YBNote.mcaddon](https://drive.google.com/file/d/1cFmwbAqW9Nh65WXsRFjVuDDtZI8Oai9H/view?usp=sharing)
 
 ### TODO
 - [x] ChestUI 新增上一個sound按鈕

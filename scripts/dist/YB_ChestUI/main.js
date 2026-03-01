@@ -131,6 +131,7 @@ function pageInit() {
     });
     obj[SOUND_PREVIEW_SLOT] = new Button("目前音色", "barrier", {
         updateType: UpdateType.empty,
+        clickSound: "",
         onClick({ player }) {
             const data = ChestUI.getData(player);
             const soundName = sounds[data.soundIdx];
@@ -140,6 +141,7 @@ function pageInit() {
                     lore: ["§r§7目前選擇的音色"],
                 }),
             });
+            player.playSound(sounds[data.soundIdx], { pitch: PITCH[data.pitchIdx] });
         },
     });
     obj[SAVE_BTN_IDX] = new Button("新增音符", "lime_concrete", {
@@ -183,7 +185,7 @@ function updateSound(player, data, playSound = true) {
     }
     // Update left arrow
     if (data.soundPageIdx === 0) {
-        itemsToUpdate[SOUND_SLOT_LEFT_ARROW] = ChestUI.newUIItem(" ", "barrier");
+        itemsToUpdate[SOUND_SLOT_LEFT_ARROW] = ChestUI.newUIItem("§c◄", "barrier");
     }
     else {
         itemsToUpdate[SOUND_SLOT_LEFT_ARROW] = ChestUI.newUIItem("◄", "arrow");
@@ -191,7 +193,7 @@ function updateSound(player, data, playSound = true) {
     // Update right arrow
     const maxPage = Math.floor((sounds.length - 1) / SOUND_SLOTS_COUNT);
     if (data.soundPageIdx >= maxPage) {
-        itemsToUpdate[SOUND_SLOT_RIGHT_ARROW] = ChestUI.newUIItem(" ", "barrier");
+        itemsToUpdate[SOUND_SLOT_RIGHT_ARROW] = ChestUI.newUIItem("§c►", "barrier");
     }
     else {
         itemsToUpdate[SOUND_SLOT_RIGHT_ARROW] = ChestUI.newUIItem("►", "arrow");

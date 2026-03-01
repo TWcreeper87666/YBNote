@@ -23,6 +23,7 @@
 - [YBNote_bp.mcpack](https://drive.google.com/file/d/1cEJLz34Z_Ew6tnSy6V_8gUhtMV9ouyuH/view?usp=sharing)
 - [YBNote_rp.mcpack](https://drive.google.com/file/d/1kJLOiTzUJMy9xnfs0Gahb9rHi5gAzCE9/view?usp=sharing)
 - [YBNote.mcaddon](https://drive.google.com/file/d/1cFmwbAqW9Nh65WXsRFjVuDDtZI8Oai9H/view?usp=sharing)
+- [YBNoteEng.mcaddon](https://drive.google.com/file/d/1KXSsvM9_bhwxFy-TROdgbZ-q5SXTBDeQ/view?usp=sharing)
 
 ## TODO
 - [x] ChestUI 新增上一個sound按鈕

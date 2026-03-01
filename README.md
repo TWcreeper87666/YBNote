@@ -24,7 +24,7 @@
 - [YBNote_rp.mcpack](https://drive.google.com/file/d/1kJLOiTzUJMy9xnfs0Gahb9rHi5gAzCE9/view?usp=sharing)
 - [YBNote.mcaddon](https://drive.google.com/file/d/1cFmwbAqW9Nh65WXsRFjVuDDtZI8Oai9H/view?usp=sharing)
 
-### TODO
+## TODO
 - [x] ChestUI 新增上一個sound按鈕
 - [x] record store player location 
 - [x] stop playing record 
@@ -35,6 +35,6 @@
 - [ ] play record: lifetime(osu mode), height(lane mode) change with bpm
 - [ ] 添加帥到爆炸的粒子
 
-### BUG
+## BUG
 - [x] chestUI編輯entity 不切換手中物品不會更新pitch, sound
 - [ ] 手機版 ChestUI 無法挑選音調?
